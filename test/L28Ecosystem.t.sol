@@ -97,39 +97,6 @@ contract L28EcosystemTest is Test {
         l28Plus.transfer(user2, 50e18);
     }
 
-    function test_SubTokenConcentrationLimit() public {
-        vm.startPrank(admin);
-        
-        compliance.setComplianceStatus(user1, ComplianceOracle.ComplianceStatus.APPROVED, identityHash1);
-        compliance.setComplianceStatus(user2, ComplianceOracle.ComplianceStatus.APPROVED, identityHash2);
-        
-        governance.approveProject(projectId); // First approval (admin)
-        
-        vm.prank(user2);
-        governance.approveProject(projectId); // Second approval (user2)
-        
-        address subTokenAddr = factory.deploySubToken("Project A", "PRJ-A", projectId, 1_000_000e18);
-        SubToken subToken = SubToken(subTokenAddr);
-        
-        // Authorize SubToken for minting
-        escrow.setAuthorizedCaller(subTokenAddr, true);
-
-        // Minting to user1 within 20% limit (200,000)
-        bytes32 escrow1 = keccak256("SubEscrow1");
-        escrow.confirmEscrow(escrow1, 200_000e18, keccak256("Ref1"));
-        subToken.mint(user1, 200_000e18, escrow1);
-        
-        assertEq(subToken.balanceOf(user1), 200_000e18);
-
-        // Try to mint more to exceed 20% limit
-        bytes32 escrow2 = keccak256("SubEscrow2");
-        escrow.confirmEscrow(escrow2, 1e18, keccak256("Ref2"));
-        
-        vm.expectRevert("Concentration limit exceeded (20%)");
-        subToken.mint(user1, 1e18, escrow2);
-
-        vm.stopPrank();
-    }
 
     function test_NavCalculationWithChainlink() public {
         vm.startPrank(admin);

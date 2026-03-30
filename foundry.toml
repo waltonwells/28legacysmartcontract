@@ -7,4 +7,12 @@ remappings = [
     "@chainlink/contracts/=lib/chainlink-brownie-contracts/contracts/"
 ]
 
+[rpc_endpoints]
+polygon = "${POLYGON_RPC_URL}"
+amoy = "${AMOY_RPC_URL}"
+
+[etherscan]
+polygon = { key = "${POLYGONSCAN_API_KEY}", url = "https://api.polygonscan.com/api" }
+amoy = { key = "${POLYGONSCAN_API_KEY}", url = "https://api-amoy.polygonscan.com/api" }
+
 # See more config options https://github.com/foundry-rs/foundry/blob/master/crates/config/README.md#all-options
